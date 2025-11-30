@@ -1,6 +1,6 @@
 /* Faites Mieux - Toolbar d'accessibilité universelle
    Par Ti Racoon
-   Version 1.0
+   Version 1.1 - FALC ajouté
 */
 
 /* POLICES ACCESSIBLES */
@@ -253,7 +253,7 @@ body.fm-theme-sepia {
   filter: sepia(0.4);
 }
 
-/* Thème contraste élevé - CORRIGÉ */
+/* Thème contraste élevé */
 body.fm-theme-high-contrast {
   background-color: #000 !important;
   color: #fff !important;
@@ -298,4 +298,42 @@ body.fm-theme-high-contrast #fm-toolbar * {
 body.fm-theme-high-contrast #fm-toggle-btn {
   background: linear-gradient(135deg, #005f73 0%, #0a9396 100%) !important;
   color: white !important;
+}
+
+/* MODE FALC - Facile À Lire et à Comprendre */
+body.fm-falc-1 {
+  font-size: 18px !important;
+  line-height: 1.8 !important;
+  letter-spacing: 0.05em !important;
+  word-spacing: 0.1em !important;
+}
+
+body.fm-falc-2 {
+  font-size: 20px !important;
+  line-height: 2 !important;
+  letter-spacing: 0.08em !important;
+  word-spacing: 0.15em !important;
+}
+
+body.fm-falc-3 {
+  font-size: 22px !important;
+  line-height: 2.2 !important;
+  letter-spacing: 0.1em !important;
+  word-spacing: 0.2em !important;
+}
+
+body.fm-falc-1 *,
+body.fm-falc-2 *,
+body.fm-falc-3 * {
+  font-size: inherit !important;
+  line-height: inherit !important;
+  letter-spacing: inherit !important;
+  word-spacing: inherit !important;
+}
+
+/* Correction des titres (legend) qui flottent */
+body legend,
+body.fm-applied legend {
+  font-size: inherit !important;
+  line-height: inherit !important;
 }
