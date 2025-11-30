@@ -233,12 +233,12 @@ input[type="range"]:focus {
   font-size: 0.9rem;
 }
 
-/* Classes appliquées au body pour l'accessibilité */
+/* Classes appliquées au body */
 body.fm-applied {
-  transition: filter 0.3s ease;
+  transition: filter 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Thèmes - appliqués via classes sur le body */
+/* Thème sombre */
 body.fm-theme-dark {
   filter: invert(1) hue-rotate(180deg);
 }
@@ -248,10 +248,54 @@ body.fm-theme-dark video {
   filter: invert(1) hue-rotate(180deg);
 }
 
+/* Thème sépia */
 body.fm-theme-sepia {
-  filter: sepia(0.3);
+  filter: sepia(0.4);
 }
 
+/* Thème contraste élevé - CORRIGÉ */
 body.fm-theme-high-contrast {
-  filter: contrast(2);
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+body.fm-theme-high-contrast * {
+  background-color: #000 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+
+body.fm-theme-high-contrast a {
+  color: #ffff00 !important;
+  text-decoration: underline !important;
+}
+
+body.fm-theme-high-contrast button,
+body.fm-theme-high-contrast input,
+body.fm-theme-high-contrast select,
+body.fm-theme-high-contrast textarea {
+  background-color: #000 !important;
+  color: #fff !important;
+  border: 2px solid #fff !important;
+}
+
+body.fm-theme-high-contrast .glass-effect,
+body.fm-theme-high-contrast .result-box,
+body.fm-theme-high-contrast .bg-white {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+/* Exclusion du bouton et toolbar du thème contraste élevé */
+body.fm-theme-high-contrast #fm-toggle-btn,
+body.fm-theme-high-contrast #fm-toolbar,
+body.fm-theme-high-contrast #fm-toolbar * {
+  background-color: rgba(255,255,255,0.98) !important;
+  color: #000 !important;
+  border-color: #d0d0d0 !important;
+}
+
+body.fm-theme-high-contrast #fm-toggle-btn {
+  background: linear-gradient(135deg, #005f73 0%, #0a9396 100%) !important;
+  color: white !important;
 }
