@@ -1,6 +1,6 @@
 /* Faites Mieux - Toolbar d'accessibilité universelle
    Par Ti Racoon
-   Version 1.0
+   Version 1.1 - FALC ajouté
 */
 
 (function() {
@@ -15,7 +15,8 @@
       brightness: 1,
       lineHeight: 1.6,
       letterSpacing: 0,
-      wordSpacing: 0
+      wordSpacing: 0,
+      falc: 0
     },
     
     save: function() {
@@ -38,20 +39,30 @@
     },
     
     apply: function() {
-      // Application de la police sur body
-      document.body.style.fontFamily = this.settings.font + ', sans-serif';
+      // Suppression des classes FALC précédentes
+      document.body.classList.remove('fm-falc-1', 'fm-falc-2', 'fm-falc-3');
       
-      // Application de la taille
-      document.body.style.fontSize = this.settings.fontSize + 'px';
-      
-      // Application de l'interligne
-      document.body.style.lineHeight = this.settings.lineHeight;
-      
-      // Application de l'espacement lettres
-      document.body.style.letterSpacing = this.settings.letterSpacing + 'px';
-      
-      // Application de l'espacement mots
-      document.body.style.wordSpacing = this.settings.wordSpacing + 'px';
+      // Application du mode FALC si activé
+      if(this.settings.falc > 0) {
+        document.body.classList.add('fm-falc-' + this.settings.falc);
+        // En mode FALC, on force certains paramètres
+        document.body.style.fontFamily = 'Lexend, sans-serif';
+      } else {
+        // Application de la police
+        document.body.style.fontFamily = this.settings.font + ', sans-serif';
+        
+        // Application de la taille
+        document.body.style.fontSize = this.settings.fontSize + 'px';
+        
+        // Application de l'interligne
+        document.body.style.lineHeight = this.settings.lineHeight;
+        
+        // Application de l'espacement lettres
+        document.body.style.letterSpacing = this.settings.letterSpacing + 'px';
+        
+        // Application de l'espacement mots
+        document.body.style.wordSpacing = this.settings.wordSpacing + 'px';
+      }
       
       // Application de la luminosité
       let filterValue = 'brightness(' + this.settings.brightness + ')';
@@ -65,7 +76,7 @@
       } else if(this.settings.theme === 'sepia') {
         filterValue += ' sepia(0.3)';
       } else if(this.settings.theme === 'high-contrast') {
-        filterValue += ' contrast(2)';
+        // Pas de filtre supplémentaire, géré par CSS
       }
       
       document.body.style.filter = filterValue;
@@ -165,6 +176,16 @@
         <label for="fm-wordSpacing">Espace mots</label>
         <input type="range" min="0" max="20" step="1" value="0" id="fm-wordSpacing">
         <span class="fm-value" id="fm-wordSpacing-val">0px</span>
+      </div>
+      
+      <div class="fm-section">
+        <label for="fm-falc">Mode FALC (Facile À Lire)</label>
+        <select id="fm-falc" class="fm-control">
+          <option value="0">Désactivé</option>
+          <option value="1">Niveau 1 - Léger</option>
+          <option value="2">Niveau 2 - Moyen</option>
+          <option value="3">Niveau 3 - Maximum</option>
+        </select>
       </div>
       
       <div class="fm-section fm-row">
@@ -274,6 +295,14 @@
     wordSpacingSlider.addEventListener('input', e => {
       fm.settings.wordSpacing = parseFloat(e.target.value);
       wordSpacingVal.textContent = fm.settings.wordSpacing + 'px';
+      fm.apply();
+      fm.save();
+    });
+    
+    // Mode FALC
+    document.getElementById('fm-falc').value = fm.settings.falc;
+    document.getElementById('fm-falc').addEventListener('change', e => {
+      fm.settings.falc = parseInt(e.target.value);
       fm.apply();
       fm.save();
     });
