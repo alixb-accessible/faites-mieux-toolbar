@@ -1,12 +1,11 @@
 /* Faites Mieux - Toolbar d'accessibilité universelle
    Par Ti Racoon
-   Version 1.1 - FALC ajouté
+   Version 2.0 
 */
 
 (function() {
   'use strict';
   
-  // Variables globales
   const fm = {
     settings: {
       theme: "light",
@@ -39,47 +38,73 @@
     },
     
     apply: function() {
-      // Suppression des classes FALC précédentes
-      document.body.classList.remove('fm-falc-1', 'fm-falc-2', 'fm-falc-3');
+      const body = document.body;
+      const allElements = document.querySelectorAll('body *:not(#fm-toolbar):not(#fm-toolbar *)');
       
-      // Application du mode FALC si activé
+      // Nettoyage des classes FALC
+      body.classList.remove('fm-falc-1', 'fm-falc-2', 'fm-falc-3');
+      
+      // Nettoyage des classes de thème
+      body.classList.remove('fm-theme-light', 'fm-theme-dark', 'fm-theme-sepia', 'fm-theme-red', 'fm-theme-blue', 'fm-theme-high-contrast');
+      
+      // Application du mode FALC
       if(this.settings.falc > 0) {
-        document.body.classList.add('fm-falc-' + this.settings.falc);
-        // En mode FALC, on force certains paramètres
-        document.body.style.fontFamily = 'Lexend, sans-serif';
+        body.classList.add('fm-falc-' + this.settings.falc);
+        // En mode FALC, on force Lexend
+        allElements.forEach(el => {
+          el.style.fontFamily = 'Lexend, sans-serif';
+        });
       } else {
         // Application de la police
-        document.body.style.fontFamily = this.settings.font + ', sans-serif';
+        allElements.forEach(el => {
+          el.style.fontFamily = this.settings.font + ', sans-serif';
+        });
         
-        // Application de la taille
-        document.body.style.fontSize = this.settings.fontSize + 'px';
+        // Application de la taille du texte
+        allElements.forEach(el => {
+          el.style.fontSize = this.settings.fontSize + 'px';
+        });
         
         // Application de l'interligne
-        document.body.style.lineHeight = this.settings.lineHeight;
+        allElements.forEach(el => {
+          el.style.lineHeight = this.settings.lineHeight;
+        });
         
         // Application de l'espacement lettres
-        document.body.style.letterSpacing = this.settings.letterSpacing + 'px';
+        allElements.forEach(el => {
+          el.style.letterSpacing = this.settings.letterSpacing + 'px';
+        });
         
         // Application de l'espacement mots
-        document.body.style.wordSpacing = this.settings.wordSpacing + 'px';
+        allElements.forEach(el => {
+          el.style.wordSpacing = this.settings.wordSpacing + 'px';
+        });
       }
       
       // Application de la luminosité
-      let filterValue = 'brightness(' + this.settings.brightness + ')';
+      body.style.filter = 'brightness(' + this.settings.brightness + ')';
       
       // Application du thème
-      document.body.classList.remove('fm-theme-light', 'fm-theme-dark', 'fm-theme-sepia', 'fm-theme-high-contrast');
-      document.body.classList.add('fm-applied', 'fm-theme-' + this.settings.theme);
+      body.classList.add('fm-theme-' + this.settings.theme);
       
-      if(this.settings.theme === 'dark') {
-        filterValue += ' invert(1) hue-rotate(180deg)';
-      } else if(this.settings.theme === 'sepia') {
-        filterValue += ' sepia(0.3)';
-      } else if(this.settings.theme === 'high-contrast') {
-        // Pas de filtre supplémentaire, géré par CSS
+      // Exclusion explicite de la toolbar
+      const toolbar = document.getElementById('fm-toolbar');
+      const toggleBtn = document.getElementById('fm-toggle-btn');
+      if(toolbar) {
+        toolbar.style.filter = 'none';
+        const toolbarElements = toolbar.querySelectorAll('*');
+        toolbarElements.forEach(el => {
+          el.style.fontFamily = 'Lexend, sans-serif';
+          el.style.fontSize = '';
+          el.style.lineHeight = '';
+          el.style.letterSpacing = '';
+          el.style.wordSpacing = '';
+          el.style.filter = 'none';
+        });
       }
-      
-      document.body.style.filter = filterValue;
+      if(toggleBtn) {
+        toggleBtn.style.filter = 'none';
+      }
     },
     
     exportJSON: function() {
@@ -97,6 +122,38 @@
         try {
           const imp = JSON.parse(e.target.result);
           Object.assign(this.settings, imp);
+          
+          // Mise à jour des contrôles de la toolbar
+          document.getElementById('fm-theme').value = this.settings.theme;
+          document.getElementById('fm-font').value = this.settings.font;
+          
+          const fontSlider = document.getElementById('fm-fontSize');
+          const fontVal = document.getElementById('fm-fontSize-val');
+          fontSlider.value = this.settings.fontSize;
+          fontVal.textContent = this.settings.fontSize + 'px';
+          
+          const brightSlider = document.getElementById('fm-brightness');
+          const brightVal = document.getElementById('fm-brightness-val');
+          brightSlider.value = this.settings.brightness;
+          brightVal.textContent = (this.settings.brightness * 100).toFixed(0) + '%';
+          
+          const lineHeightSlider = document.getElementById('fm-lineHeight');
+          const lineHeightVal = document.getElementById('fm-lineHeight-val');
+          lineHeightSlider.value = this.settings.lineHeight;
+          lineHeightVal.textContent = this.settings.lineHeight.toFixed(1);
+          
+          const letterSpacingSlider = document.getElementById('fm-letterSpacing');
+          const letterSpacingVal = document.getElementById('fm-letterSpacing-val');
+          letterSpacingSlider.value = this.settings.letterSpacing;
+          letterSpacingVal.textContent = this.settings.letterSpacing + 'px';
+          
+          const wordSpacingSlider = document.getElementById('fm-wordSpacing');
+          const wordSpacingVal = document.getElementById('fm-wordSpacing-val');
+          wordSpacingSlider.value = this.settings.wordSpacing;
+          wordSpacingVal.textContent = this.settings.wordSpacing + 'px';
+          
+          document.getElementById('fm-falc').value = this.settings.falc;
+          
           this.apply();
           this.save();
           alert("Préférences importées !");
@@ -116,7 +173,6 @@
     }
   };
   
-  // HTML de la toolbar
   const toolbarHTML = `
     <button id="fm-toggle-btn" aria-label="Ouvrir les paramètres d'accessibilité" aria-expanded="false">
       Accessibilité / Paramètres
@@ -134,6 +190,8 @@
           <option value="light">Clair</option>
           <option value="dark">Sombre</option>
           <option value="sepia">Sépia</option>
+          <option value="red">Rouge</option>
+          <option value="blue">Bleu</option>
           <option value="high-contrast">Contraste élevé</option>
         </select>
       </div>
@@ -156,7 +214,7 @@
       
       <div class="fm-section fm-row">
         <label for="fm-brightness">Luminosité</label>
-        <input type="range" min="0.5" max="2" step="0.05" value="1" id="fm-brightness">
+        <input type="range" min="0.5" max="1.5" step="0.05" value="1" id="fm-brightness">
         <span class="fm-value" id="fm-brightness-val">100%</span>
       </div>
       
@@ -167,29 +225,29 @@
       </div>
       
       <div class="fm-section fm-row">
-        <label for="fm-letterSpacing">Espace lettres</label>
+        <label for="fm-letterSpacing">Lettres</label>
         <input type="range" min="0" max="5" step="0.5" value="0" id="fm-letterSpacing">
         <span class="fm-value" id="fm-letterSpacing-val">0px</span>
       </div>
       
       <div class="fm-section fm-row">
-        <label for="fm-wordSpacing">Espace mots</label>
+        <label for="fm-wordSpacing">Mots</label>
         <input type="range" min="0" max="20" step="1" value="0" id="fm-wordSpacing">
         <span class="fm-value" id="fm-wordSpacing-val">0px</span>
       </div>
       
       <div class="fm-section">
-        <label for="fm-falc">Mode FALC (Facile À Lire)</label>
+        <label for="fm-falc">Mode FALC</label>
         <select id="fm-falc" class="fm-control">
           <option value="0">Désactivé</option>
-          <option value="1">Niveau 1 - Léger</option>
-          <option value="2">Niveau 2 - Moyen</option>
-          <option value="3">Niveau 3 - Maximum</option>
+          <option value="1">Niveau 1</option>
+          <option value="2">Niveau 2</option>
+          <option value="3">Niveau 3</option>
         </select>
       </div>
       
       <div class="fm-section fm-row">
-        <button class="fm-btn" id="fm-read">Lire le texte</button>
+        <button class="fm-btn" id="fm-read">Lire</button>
       </div>
       
       <div class="fm-section fm-row">
@@ -202,22 +260,17 @@
     </div>
   `;
   
-  // Initialisation au chargement de la page
   function init() {
-    // Chargement des paramètres
     fm.load();
     
-    // Injection du HTML
     const container = document.createElement('div');
     container.innerHTML = toolbarHTML;
     document.body.appendChild(container);
     
-    // Récupération des éléments
     const toggleBtn = document.getElementById('fm-toggle-btn');
     const toolbar = document.getElementById('fm-toolbar');
     const closeBtn = toolbar.querySelector('.fm-close');
     
-    // Gestion ouverture/fermeture
     toggleBtn.addEventListener('click', function() {
       const isVisible = toolbar.classList.contains('visible');
       toolbar.classList.toggle('visible');
@@ -229,7 +282,7 @@
       toggleBtn.setAttribute('aria-expanded', 'false');
     });
     
-    // Event listeners pour les contrôles
+    // Thème
     document.getElementById('fm-theme').value = fm.settings.theme;
     document.getElementById('fm-theme').addEventListener('change', e => {
       fm.settings.theme = e.target.value;
@@ -237,6 +290,7 @@
       fm.save();
     });
     
+    // Police
     document.getElementById('fm-font').value = fm.settings.font;
     document.getElementById('fm-font').addEventListener('change', e => {
       fm.settings.font = e.target.value;
@@ -244,6 +298,7 @@
       fm.save();
     });
     
+    // Taille
     const fontSlider = document.getElementById('fm-fontSize');
     const fontVal = document.getElementById('fm-fontSize-val');
     fontSlider.value = fm.settings.fontSize;
@@ -255,6 +310,7 @@
       fm.save();
     });
     
+    // Luminosité
     const brightSlider = document.getElementById('fm-brightness');
     const brightVal = document.getElementById('fm-brightness-val');
     brightSlider.value = fm.settings.brightness;
@@ -266,6 +322,7 @@
       fm.save();
     });
     
+    // Interligne
     const lineHeightSlider = document.getElementById('fm-lineHeight');
     const lineHeightVal = document.getElementById('fm-lineHeight-val');
     lineHeightSlider.value = fm.settings.lineHeight;
@@ -277,6 +334,7 @@
       fm.save();
     });
     
+    // Espacement lettres
     const letterSpacingSlider = document.getElementById('fm-letterSpacing');
     const letterSpacingVal = document.getElementById('fm-letterSpacing-val');
     letterSpacingSlider.value = fm.settings.letterSpacing;
@@ -288,6 +346,7 @@
       fm.save();
     });
     
+    // Espacement mots
     const wordSpacingSlider = document.getElementById('fm-wordSpacing');
     const wordSpacingVal = document.getElementById('fm-wordSpacing-val');
     wordSpacingSlider.value = fm.settings.wordSpacing;
@@ -299,7 +358,7 @@
       fm.save();
     });
     
-    // Mode FALC
+    // FALC
     document.getElementById('fm-falc').value = fm.settings.falc;
     document.getElementById('fm-falc').addEventListener('change', e => {
       fm.settings.falc = parseInt(e.target.value);
@@ -307,6 +366,7 @@
       fm.save();
     });
     
+    // Lecture
     document.getElementById('fm-read').addEventListener('click', () => {
       const selection = window.getSelection().toString().trim();
       if(selection) {
@@ -316,8 +376,8 @@
       }
     });
     
+    // Export/Import
     document.getElementById('fm-export').addEventListener('click', () => fm.exportJSON());
-    
     document.getElementById('fm-import').addEventListener('change', e => {
       const file = e.target.files[0];
       if(file) fm.importJSON(file);
@@ -327,7 +387,6 @@
     fm.apply();
   }
   
-  // Lancement au chargement de la page
   if(document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
