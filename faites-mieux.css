@@ -1,6 +1,6 @@
 /* Faites Mieux - Toolbar d'accessibilité universelle
    Par Ti Racoon
-   Version 2.0 
+   Version 3.0 
 */
 
 /* POLICES ACCESSIBLES */
@@ -87,16 +87,39 @@
   display: block;
 }
 
-@media (max-width: 420px) { 
+/* Media queries pour mobile */
+@media (max-width: 768px) { 
   #fm-toolbar { 
-    left: 12px; 
-    right: 12px; 
-    width: auto; 
-    top: 60px; 
+    left: 8px; 
+    right: 8px; 
+    width: auto;
+    top: 55px;
+    font-size: 0.9rem !important;
+    padding: 12px;
   }
+  
   #fm-toggle-btn { 
-    left: 12px; 
-    width: auto; 
+    left: 8px;
+    font-size: 0.85rem;
+    padding: 10px 16px;
+  }
+  
+  .fm-row {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+  
+  .fm-row label {
+    min-width: auto !important;
+    width: 100%;
+  }
+  
+  .fm-row input[type="range"] {
+    width: 100% !important;
+  }
+  
+  .fm-value {
+    align-self: flex-end;
   }
 }
 
@@ -232,6 +255,14 @@ input[type="range"]:focus {
   outline-offset: 2px; 
 }
 
+.fm-reset-btn {
+  background: #dc2626 !important;
+}
+
+.fm-reset-btn:hover {
+  background: #b91c1c !important;
+}
+
 .fm-value { 
   min-width: 50px; 
   text-align: right; 
@@ -249,7 +280,7 @@ input[type="range"]:focus {
   -webkit-filter: none !important;
 }
 
-/* THÈMES - Application sur body et ses enfants SAUF toolbar */
+/* THÈMES */
 body.fm-theme-dark:not(#fm-toolbar):not(#fm-toggle-btn) {
   background-color: #1a1a1a !important;
   color: #ffffff !important;
@@ -277,13 +308,6 @@ body.fm-theme-sepia *:not(#fm-toolbar):not(#fm-toolbar *):not(#fm-toggle-btn):no
   color: #2d2d25 !important;
 }
 
-body.fm-theme-sepia .glass-effect,
-body.fm-theme-sepia .result-box,
-body.fm-theme-sepia .bg-white {
-  background: rgba(244, 236, 216, 0.95) !important;
-  color: #2d2d25 !important;
-}
-
 body.fm-theme-red {
   background-color: #fff5f5 !important;
   color: #3b0000 !important;
@@ -291,13 +315,6 @@ body.fm-theme-red {
 
 body.fm-theme-red *:not(#fm-toolbar):not(#fm-toolbar *):not(#fm-toggle-btn):not(#fm-toggle-btn *) {
   background-color: #fff5f5 !important;
-  color: #3b0000 !important;
-}
-
-body.fm-theme-red .glass-effect,
-body.fm-theme-red .result-box,
-body.fm-theme-red .bg-white {
-  background: rgba(255, 245, 245, 0.95) !important;
   color: #3b0000 !important;
 }
 
@@ -311,37 +328,41 @@ body.fm-theme-blue *:not(#fm-toolbar):not(#fm-toolbar *):not(#fm-toggle-btn):not
   color: #002b4d !important;
 }
 
-body.fm-theme-blue .glass-effect,
-body.fm-theme-blue .result-box,
-body.fm-theme-blue .bg-white {
-  background: rgba(240, 247, 255, 0.95) !important;
-  color: #002b4d !important;
-}
-
+/* CONTRASTE ÉLEVÉ - VRAI contraste maintenant */
 body.fm-theme-high-contrast {
-  background-color: #000 !important;
-  color: #fff !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
 }
 
 body.fm-theme-high-contrast *:not(#fm-toolbar):not(#fm-toolbar *):not(#fm-toggle-btn):not(#fm-toggle-btn *) {
-  background-color: #000 !important;
-  color: #fff !important;
-  border-color: #fff !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+  border-width: 2px !important;
 }
 
 body.fm-theme-high-contrast a:not(#fm-toolbar *) {
-  color: #ffff00 !important;
+  color: #0000ff !important;
   text-decoration: underline !important;
+  font-weight: 700 !important;
+}
+
+body.fm-theme-high-contrast button:not(#fm-toolbar *),
+body.fm-theme-high-contrast input:not(#fm-toolbar *),
+body.fm-theme-high-contrast select:not(#fm-toolbar *),
+body.fm-theme-high-contrast textarea:not(#fm-toolbar *) {
+  border: 3px solid #000000 !important;
 }
 
 body.fm-theme-high-contrast .glass-effect,
 body.fm-theme-high-contrast .result-box,
 body.fm-theme-high-contrast .bg-white {
-  background-color: #000 !important;
-  color: #fff !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 3px solid #000000 !important;
 }
 
-/* MODE FALC */
+/* MODE FALC - N'affecte QUE la taille/espacements */
 body.fm-falc-1 *:not(#fm-toolbar):not(#fm-toolbar *):not(#fm-toggle-btn) {
   font-size: 18px !important;
   line-height: 1.8 !important;
