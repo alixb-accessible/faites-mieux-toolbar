@@ -1,6 +1,6 @@
 /* Faites Mieux - Toolbar d'accessibilité universelle
    Par Ti Racoon
-   Version 2.0 
+   Version 3.0 
 */
 
 (function() {
@@ -9,7 +9,7 @@
   const fm = {
     settings: {
       theme: "light",
-      font: "Lexend",
+      font: "default",
       fontSize: 16,
       brightness: 1,
       lineHeight: 1.6,
@@ -37,57 +37,94 @@
       }
     },
     
+    reset: function() {
+      this.settings = {
+        theme: "light",
+        font: "default",
+        fontSize: 16,
+        brightness: 1,
+        lineHeight: 1.6,
+        letterSpacing: 0,
+        wordSpacing: 0,
+        falc: 0
+      };
+      this.save();
+      this.apply();
+      this.updateControls();
+    },
+    
+    updateControls: function() {
+      document.getElementById('fm-theme').value = this.settings.theme;
+      document.getElementById('fm-font').value = this.settings.font;
+      
+      const fontSlider = document.getElementById('fm-fontSize');
+      const fontVal = document.getElementById('fm-fontSize-val');
+      fontSlider.value = this.settings.fontSize;
+      fontVal.textContent = this.settings.fontSize + 'px';
+      
+      const brightSlider = document.getElementById('fm-brightness');
+      const brightVal = document.getElementById('fm-brightness-val');
+      brightSlider.value = this.settings.brightness;
+      brightVal.textContent = (this.settings.brightness * 100).toFixed(0) + '%';
+      
+      const lineHeightSlider = document.getElementById('fm-lineHeight');
+      const lineHeightVal = document.getElementById('fm-lineHeight-val');
+      lineHeightSlider.value = this.settings.lineHeight;
+      lineHeightVal.textContent = this.settings.lineHeight.toFixed(1);
+      
+      const letterSpacingSlider = document.getElementById('fm-letterSpacing');
+      const letterSpacingVal = document.getElementById('fm-letterSpacing-val');
+      letterSpacingSlider.value = this.settings.letterSpacing;
+      letterSpacingVal.textContent = this.settings.letterSpacing + 'px';
+      
+      const wordSpacingSlider = document.getElementById('fm-wordSpacing');
+      const wordSpacingVal = document.getElementById('fm-wordSpacing-val');
+      wordSpacingSlider.value = this.settings.wordSpacing;
+      wordSpacingVal.textContent = this.settings.wordSpacing + 'px';
+      
+      document.getElementById('fm-falc').value = this.settings.falc;
+    },
+    
     apply: function() {
       const body = document.body;
       const allElements = document.querySelectorAll('body *:not(#fm-toolbar):not(#fm-toolbar *)');
       
-      // Nettoyage des classes FALC
+      // Nettoyage des classes
       body.classList.remove('fm-falc-1', 'fm-falc-2', 'fm-falc-3');
-      
-      // Nettoyage des classes de thème
       body.classList.remove('fm-theme-light', 'fm-theme-dark', 'fm-theme-sepia', 'fm-theme-red', 'fm-theme-blue', 'fm-theme-high-contrast');
       
-      // Application du mode FALC
+      // Application du thème
+      body.classList.add('fm-theme-' + this.settings.theme);
+      
+      // Application du mode FALC (affecte SEULEMENT taille/espacements)
       if(this.settings.falc > 0) {
         body.classList.add('fm-falc-' + this.settings.falc);
-        // En mode FALC, on force Lexend
-        allElements.forEach(el => {
-          el.style.fontFamily = 'Lexend, sans-serif';
-        });
       } else {
-        // Application de la police
+        // Si pas de FALC, on applique les réglages manuels
+        allElements.forEach(el => {
+          el.style.fontSize = this.settings.fontSize + 'px';
+          el.style.lineHeight = this.settings.lineHeight;
+          el.style.letterSpacing = this.settings.letterSpacing + 'px';
+          el.style.wordSpacing = this.settings.wordSpacing + 'px';
+        });
+      }
+      
+      // Application de la police (TOUJOURS, même en FALC)
+      if(this.settings.font !== 'default') {
         allElements.forEach(el => {
           el.style.fontFamily = this.settings.font + ', sans-serif';
         });
-        
-        // Application de la taille du texte
+      } else {
+        // Police par défaut : on supprime le style
         allElements.forEach(el => {
-          el.style.fontSize = this.settings.fontSize + 'px';
-        });
-        
-        // Application de l'interligne
-        allElements.forEach(el => {
-          el.style.lineHeight = this.settings.lineHeight;
-        });
-        
-        // Application de l'espacement lettres
-        allElements.forEach(el => {
-          el.style.letterSpacing = this.settings.letterSpacing + 'px';
-        });
-        
-        // Application de l'espacement mots
-        allElements.forEach(el => {
-          el.style.wordSpacing = this.settings.wordSpacing + 'px';
+          el.style.fontFamily = '';
         });
       }
       
       // Application de la luminosité
       body.style.filter = 'brightness(' + this.settings.brightness + ')';
       
-      // Application du thème
-      body.classList.add('fm-theme-' + this.settings.theme);
-      
-      // Exclusion explicite de la toolbar
+      // Exclusion de la toolbar
       const toolbar = document.getElementById('fm-toolbar');
       const toggleBtn = document.getElementById('fm-toggle-btn');
       if(toolbar) {
@@ -122,40 +159,9 @@
         try {
           const imp = JSON.parse(e.target.result);
           Object.assign(this.settings, imp);
-          
-          // Mise à jour des contrôles de la toolbar
-          document.getElementById('fm-theme').value = this.settings.theme;
-          document.getElementById('fm-font').value = this.settings.font;
-          
-          const fontSlider = document.getElementById('fm-fontSize');
-          const fontVal = document.getElementById('fm-fontSize-val');
-          fontSlider.value = this.settings.fontSize;
-          fontVal.textContent = this.settings.fontSize + 'px';
-          
-          const brightSlider = document.getElementById('fm-brightness');
-          const brightVal = document.getElementById('fm-brightness-val');
-          brightSlider.value = this.settings.brightness;
-          brightVal.textContent = (this.settings.brightness * 100).toFixed(0) + '%';
-          
-          const lineHeightSlider = document.getElementById('fm-lineHeight');
-          const lineHeightVal = document.getElementById('fm-lineHeight-val');
-          lineHeightSlider.value = this.settings.lineHeight;
-          lineHeightVal.textContent = this.settings.lineHeight.toFixed(1);
-          
-          const letterSpacingSlider = document.getElementById('fm-letterSpacing');
-          const letterSpacingVal = document.getElementById('fm-letterSpacing-val');
-          letterSpacingSlider.value = this.settings.letterSpacing;
-          letterSpacingVal.textContent = this.settings.letterSpacing + 'px';
-          
-          const wordSpacingSlider = document.getElementById('fm-wordSpacing');
-          const wordSpacingVal = document.getElementById('fm-wordSpacing-val');
-          wordSpacingSlider.value = this.settings.wordSpacing;
-          wordSpacingVal.textContent = this.settings.wordSpacing + 'px';
-          
-          document.getElementById('fm-falc').value = this.settings.falc;
-          
           this.apply();
           this.save();
+          this.updateControls();
           alert("Préférences importées !");
         } catch(err) {
           alert("Erreur import JSON: " + err);
@@ -199,6 +205,7 @@
       <div class="fm-section">
         <label for="fm-font">Police</label>
         <select id="fm-font" class="fm-control">
+          <option value="default">Défaut (police du site)</option>
           <option value="Lexend">Lexend</option>
           <option value="Atkinson Hyperlegible">Atkinson Hyperlegible</option>
           <option value="OpenDyslexic">OpenDyslexic</option>
@@ -257,6 +264,10 @@
           <input type="file" id="fm-import" accept=".json" style="display:none;">
         </label>
       </div>
+      
+      <div class="fm-section">
+        <button class="fm-btn fm-reset-btn" id="fm-reset" style="width:100%;">Réinitialiser tout</button>
+      </div>
     </div>
   `;
   
@@ -280,6 +291,14 @@
     closeBtn.addEventListener('click', function() {
       toolbar.classList.remove('visible');
       toggleBtn.setAttribute('aria-expanded', 'false');
+    });
+    
+    // Bouton Réinitialiser
+    document.getElementById('fm-reset').addEventListener('click', function() {
+      if(confirm('Voulez-vous vraiment réinitialiser tous les paramètres ?')) {
+        fm.reset();
+        alert('Tous les paramètres ont été réinitialisés !');
+      }
     });
     
     // Thème
