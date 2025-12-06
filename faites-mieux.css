@@ -1,6 +1,6 @@
 /* Faites Mieux - Toolbar d'accessibilité universelle
    Par Ti Racoon
-   Version 3.0 
+   Version 3.1 - Bouton compact déplaçable + Voix + NVDA
 */
 
 /* POLICES ACCESSIBLES */
@@ -28,7 +28,7 @@
   --fm-z: 2147483000;
 }
 
-/* Bouton d'ouverture - À GAUCHE */
+/* Bouton d'ouverture - Version compacte et déplaçable */
 #fm-toggle-btn {
   position: fixed;
   top: 12px;
@@ -37,18 +37,65 @@
   background: linear-gradient(135deg, #005f73 0%, #0a9396 100%);
   color: white;
   border: none;
-  padding: 12px 20px;
+  padding: 10px;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  cursor: pointer;
+  cursor: move;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  transition: all 0.3s ease;
+  transition: box-shadow 0.3s ease;
   font-family: var(--fm-font);
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  user-select: none;
+}
+
+#fm-toggle-btn.dragging {
+  transition: none;
+  cursor: grabbing;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+#fm-toggle-btn.compact {
+  width: 44px;
+}
+
+#fm-toggle-btn.expanded {
+  width: auto;
+  padding: 12px 20px;
+}
+
+/* Gestion de l'affichage du texte */
+#fm-toggle-btn .btn-text-full {
+  display: none;
+}
+
+#fm-toggle-btn .btn-text-compact {
+  display: none;
+}
+
+#fm-toggle-btn.compact .btn-text-compact {
+  display: inline;
+}
+
+#fm-toggle-btn.compact .btn-text-full {
+  display: none;
+}
+
+#fm-toggle-btn.expanded .btn-text-compact {
+  display: none;
+}
+
+#fm-toggle-btn.expanded .btn-text-full {
+  display: inline;
 }
 
 #fm-toggle-btn:hover {
-  transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0,0,0,0.3);
 }
 
@@ -57,12 +104,12 @@
   outline-offset: 2px;
 }
 
-/* Toolbar container - À GAUCHE */
+/* Toolbar container */
 #fm-toolbar {
   font-family: var(--fm-font) !important;
   position: fixed;
   left: 12px;
-  top: 60px;
+  top: 68px;
   z-index: var(--fm-z);
   width: 380px;
   max-width: calc(100% - 24px);
@@ -74,7 +121,7 @@
   color: #000 !important;
   font-size: 0.95rem !important;
   display: none;
-  max-height: calc(100vh - 80px);
+  max-height: calc(100vh - 88px);
   overflow-y: auto;
 }
 
@@ -93,7 +140,7 @@
     left: 8px; 
     right: 8px; 
     width: auto;
-    top: 55px;
+    top: 60px;
     font-size: 0.9rem !important;
     padding: 12px;
   }
@@ -147,6 +194,8 @@
   font-size: 1.5rem !important; 
   color: #000 !important; 
   line-height: 1;
+  min-width: 32px;
+  min-height: 32px;
 }
 
 #fm-toolbar .fm-close:hover { 
@@ -255,6 +304,14 @@ input[type="range"]:focus {
   outline-offset: 2px; 
 }
 
+.fm-btn-secondary {
+  background: #6c757d !important;
+}
+
+.fm-btn-nvda {
+  background: #9933cc !important;
+}
+
 .fm-reset-btn {
   background: #dc2626 !important;
 }
@@ -269,6 +326,13 @@ input[type="range"]:focus {
   font-weight: 700 !important; 
   color: #000 !important; 
   font-size: 0.85rem !important;
+}
+
+.fm-voice-info {
+  font-size: 0.85rem !important;
+  color: #666 !important;
+  margin-top: 4px;
+  font-style: italic;
 }
 
 /* Exclusion de la toolbar pour TOUS les effets */
@@ -328,7 +392,7 @@ body.fm-theme-blue *:not(#fm-toolbar):not(#fm-toolbar *):not(#fm-toggle-btn):not
   color: #002b4d !important;
 }
 
-/* CONTRASTE ÉLEVÉ - VRAI contraste maintenant */
+/* CONTRASTE ÉLEVÉ */
 body.fm-theme-high-contrast {
   background-color: #ffffff !important;
   color: #000000 !important;
@@ -362,7 +426,7 @@ body.fm-theme-high-contrast .bg-white {
   border: 3px solid #000000 !important;
 }
 
-/* MODE FALC - N'affecte QUE la taille/espacements */
+/* MODE FALC */
 body.fm-falc-1 *:not(#fm-toolbar):not(#fm-toolbar *):not(#fm-toggle-btn) {
   font-size: 18px !important;
   line-height: 1.8 !important;
