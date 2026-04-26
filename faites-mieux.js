@@ -1,6 +1,6 @@
 /* Faites Mieux - Toolbar d'accessibilité universelle
    Par Ti Racoon
-   Version 3.1 - Bouton compact déplaçable + Voix + NVDA
+   Version 3.2 - Fix header + Bandeau d'accueil
 */
 
 (function() {
@@ -111,7 +111,7 @@
     
     apply: function() {
       const body = document.body;
-      const allElements = document.querySelectorAll('body *:not(#fm-toolbar):not(#fm-toolbar *)');
+      const allElements = document.querySelectorAll('body *:not(#fm-toolbar):not(#fm-toolbar *):not(#fm-welcome-banner):not(#fm-welcome-banner *)');
       
       body.classList.remove('fm-falc-1', 'fm-falc-2', 'fm-falc-3');
       body.classList.remove('fm-theme-light', 'fm-theme-dark', 'fm-theme-sepia', 'fm-theme-red', 'fm-theme-blue', 'fm-theme-high-contrast');
@@ -143,6 +143,8 @@
       
       const toolbar = document.getElementById('fm-toolbar');
       const toggleBtn = document.getElementById('fm-toggle-btn');
+      const banner = document.getElementById('fm-welcome-banner');
+
       if(toolbar) {
         toolbar.style.filter = 'none';
         const toolbarElements = toolbar.querySelectorAll('*');
@@ -157,6 +159,9 @@
       }
       if(toggleBtn) {
         toggleBtn.style.filter = 'none';
+      }
+      if(banner) {
+        banner.style.filter = 'none';
       }
     },
     
@@ -236,7 +241,7 @@
           this.apply();
           this.save();
           this.updateControls();
-          alert("Préférences importées !");
+          alert("Preferences importées !");
         } catch(err) {
           alert("Erreur import JSON: " + err);
         }
@@ -244,12 +249,149 @@
       reader.readAsText(file);
     }
   };
-  
-  const toolbarHTML = '<button id="fm-toggle-btn" class="compact" aria-label="Ouvrir les paramètres d\'accessibilité" aria-expanded="false"><span class="btn-text-compact">A</span><span class="btn-text-full">Accessibilité / Paramètres</span></button><div id="fm-toolbar" role="dialog" aria-label="Barre d\'outils d\'accessibilité"><header><h2>Faites Mieux</h2><button class="fm-close" aria-label="Fermer">X</button></header><div class="fm-section"><label for="fm-theme">Thème</label><select id="fm-theme" class="fm-control"><option value="light">Clair</option><option value="dark">Sombre</option><option value="sepia">Sépia</option><option value="red">Rouge</option><option value="blue">Bleu</option><option value="high-contrast">Contraste élevé</option></select></div><div class="fm-section"><label for="fm-font">Police</label><select id="fm-font" class="fm-control"><option value="default">Défaut (police du site)</option><option value="Lexend">Lexend</option><option value="Atkinson Hyperlegible">Atkinson Hyperlegible</option><option value="OpenDyslexic">OpenDyslexic</option><option value="Inter">Inter</option></select></div><div class="fm-section fm-row"><label for="fm-fontSize">Taille</label><input type="range" min="12" max="32" step="1" value="16" id="fm-fontSize"><span class="fm-value" id="fm-fontSize-val">16px</span></div><div class="fm-section fm-row"><label for="fm-brightness">Luminosité</label><input type="range" min="0.5" max="1.5" step="0.05" value="1" id="fm-brightness"><span class="fm-value" id="fm-brightness-val">100%</span></div><div class="fm-section fm-row"><label for="fm-lineHeight">Interligne</label><input type="range" min="1" max="2.5" step="0.1" value="1.6" id="fm-lineHeight"><span class="fm-value" id="fm-lineHeight-val">1.6</span></div><div class="fm-section fm-row"><label for="fm-letterSpacing">Lettres</label><input type="range" min="0" max="5" step="0.5" value="0" id="fm-letterSpacing"><span class="fm-value" id="fm-letterSpacing-val">0px</span></div><div class="fm-section fm-row"><label for="fm-wordSpacing">Mots</label><input type="range" min="0" max="20" step="1" value="0" id="fm-wordSpacing"><span class="fm-value" id="fm-wordSpacing-val">0px</span></div><div class="fm-section"><label for="fm-falc">Mode FALC</label><select id="fm-falc" class="fm-control"><option value="0">Désactivé</option><option value="1">Niveau 1</option><option value="2">Niveau 2</option><option value="3">Niveau 3</option></select></div><div class="fm-section"><label for="fm-voice">Voix de lecture</label><select id="fm-voice" class="fm-control"><option value="0">Chargement des voix...</option></select><p class="fm-voice-info">Sélectionnez la voix pour la lecture à l\'écran</p></div><div class="fm-section fm-row"><label for="fm-speechRate">Vitesse</label><input type="range" min="0.5" max="2" step="0.1" value="1" id="fm-speechRate"><span class="fm-value" id="fm-speechRate-val">1x</span></div><div class="fm-section fm-row"><button class="fm-btn" id="fm-read">Lire le texte</button></div><div class="fm-section"><button class="fm-btn fm-btn-nvda" id="fm-nvda">Télécharger NVDA</button><p class="fm-voice-info">NVDA est un lecteur d\'écran gratuit et open source</p></div><div class="fm-section fm-row"><button class="fm-btn" id="fm-export">Exporter</button><label class="fm-btn" style="margin:0;cursor:pointer;">Importer<input type="file" id="fm-import" accept=".json" style="display:none;"></label></div><div class="fm-section"><button class="fm-btn fm-btn-secondary" id="fm-reset-position">Réinitialiser position du bouton</button><p class="fm-voice-info">Replace le bouton en haut à gauche</p></div><div class="fm-section"><button class="fm-btn fm-reset-btn" id="fm-reset" style="width:100%;">Réinitialiser tout</button></div></div>';
-  
+
+  // =============================================
+  // HTML TOOLBAR
+  // =============================================
+  const toolbarHTML = `
+    <button id="fm-toggle-btn" class="compact" aria-label="Ouvrir les parametres d'accessibilite" aria-expanded="false">
+      <span class="btn-text-compact">A</span>
+      <span class="btn-text-full">Accessibilite / Parametres</span>
+    </button>
+
+    <div id="fm-toolbar" role="dialog" aria-label="Barre d'outils d'accessibilite">
+      <header>
+        <h2>Fermer le panneau</h2>
+        <button class="fm-close" aria-label="Fermer le panneau">&#x00D7;</button>
+      </header>
+
+      <div class="fm-section">
+        <label for="fm-theme">Theme</label>
+        <select id="fm-theme" class="fm-control">
+          <option value="light">Clair</option>
+          <option value="dark">Sombre</option>
+          <option value="sepia">Sepia</option>
+          <option value="red">Rouge</option>
+          <option value="blue">Bleu</option>
+          <option value="high-contrast">Contraste eleve</option>
+        </select>
+      </div>
+
+      <div class="fm-section">
+        <label for="fm-font">Police</label>
+        <select id="fm-font" class="fm-control">
+          <option value="default">Defaut (police du site)</option>
+          <option value="Lexend">Lexend</option>
+          <option value="Atkinson Hyperlegible">Atkinson Hyperlegible</option>
+          <option value="OpenDyslexic">OpenDyslexic</option>
+          <option value="Inter">Inter</option>
+        </select>
+      </div>
+
+      <div class="fm-section fm-row">
+        <label for="fm-fontSize">Taille</label>
+        <input type="range" min="12" max="32" step="1" value="16" id="fm-fontSize">
+        <span class="fm-value" id="fm-fontSize-val">16px</span>
+      </div>
+
+      <div class="fm-section fm-row">
+        <label for="fm-brightness">Luminosite</label>
+        <input type="range" min="0.5" max="1.5" step="0.05" value="1" id="fm-brightness">
+        <span class="fm-value" id="fm-brightness-val">100%</span>
+      </div>
+
+      <div class="fm-section fm-row">
+        <label for="fm-lineHeight">Interligne</label>
+        <input type="range" min="1" max="2.5" step="0.1" value="1.6" id="fm-lineHeight">
+        <span class="fm-value" id="fm-lineHeight-val">1.6</span>
+      </div>
+
+      <div class="fm-section fm-row">
+        <label for="fm-letterSpacing">Lettres</label>
+        <input type="range" min="0" max="5" step="0.5" value="0" id="fm-letterSpacing">
+        <span class="fm-value" id="fm-letterSpacing-val">0px</span>
+      </div>
+
+      <div class="fm-section fm-row">
+        <label for="fm-wordSpacing">Mots</label>
+        <input type="range" min="0" max="20" step="1" value="0" id="fm-wordSpacing">
+        <span class="fm-value" id="fm-wordSpacing-val">0px</span>
+      </div>
+
+      <div class="fm-section">
+        <label for="fm-falc">Mode FALC</label>
+        <select id="fm-falc" class="fm-control">
+          <option value="0">Desactive</option>
+          <option value="1">Niveau 1</option>
+          <option value="2">Niveau 2</option>
+          <option value="3">Niveau 3</option>
+        </select>
+      </div>
+
+      <div class="fm-section">
+        <label for="fm-voice">Voix de lecture</label>
+        <select id="fm-voice" class="fm-control">
+          <option value="0">Chargement des voix...</option>
+        </select>
+        <p class="fm-voice-info">Selectionnez la voix pour la lecture a l'ecran</p>
+      </div>
+
+      <div class="fm-section fm-row">
+        <label for="fm-speechRate">Vitesse</label>
+        <input type="range" min="0.5" max="2" step="0.1" value="1" id="fm-speechRate">
+        <span class="fm-value" id="fm-speechRate-val">1x</span>
+      </div>
+
+      <div class="fm-section fm-row">
+        <button class="fm-btn" id="fm-read">Lire le texte</button>
+      </div>
+
+      <div class="fm-section">
+        <button class="fm-btn fm-btn-nvda" id="fm-nvda">Telecharger NVDA</button>
+        <p class="fm-voice-info">NVDA est un lecteur d'ecran gratuit et open source</p>
+      </div>
+
+      <div class="fm-section fm-row">
+        <button class="fm-btn" id="fm-export">Exporter</button>
+        <label class="fm-btn" style="margin:0;cursor:pointer;">Importer
+          <input type="file" id="fm-import" accept=".json" style="display:none;">
+        </label>
+      </div>
+
+      <div class="fm-section">
+        <button class="fm-btn fm-btn-secondary" id="fm-reset-position">Reinitialiser position du bouton</button>
+        <p class="fm-voice-info">Replace le bouton en haut a gauche</p>
+      </div>
+
+      <div class="fm-section">
+        <button class="fm-btn fm-reset-btn" id="fm-reset" style="width:100%;">Reinitialiser tout</button>
+      </div>
+
+      <p id="fm-signature">Faites Mieux &mdash; par Ti Racoon</p>
+    </div>
+  `;
+
+  // =============================================
+  // HTML BANDEAU D'ACCUEIL
+  // =============================================
+  const bannerHTML = `
+    <div id="fm-welcome-banner" role="complementary" aria-label="Proposition d'aide a l'accessibilite">
+      <p class="fm-wb-text">Besoin d'aide pour lire ou naviguer sur ce site ?</p>
+      <div class="fm-wb-actions">
+        <button id="fm-wb-yes">Oui, voir les options</button>
+        <button id="fm-wb-no">Non, merci</button>
+        <button id="fm-wb-never">Ne plus me poser la question</button>
+      </div>
+    </div>
+  `;
+
+  // =============================================
+  // INIT
+  // =============================================
   function init() {
     fm.load();
     
+    // Injecter toolbar
     const container = document.createElement('div');
     container.innerHTML = toolbarHTML;
     document.body.appendChild(container);
@@ -264,7 +406,43 @@
       toggleBtn.style.top = fm.settings.buttonPosition.top + 'px';
       toggleBtn.style.left = fm.settings.buttonPosition.left + 'px';
     }
+
+    // =============================================
+    // BANDEAU D'ACCUEIL
+    // =============================================
+    const bannerDismissed = localStorage.getItem('fm-banner-dismissed');
+
+    if(!bannerDismissed) {
+      const bannerContainer = document.createElement('div');
+      bannerContainer.innerHTML = bannerHTML;
+      document.body.appendChild(bannerContainer);
+
+      const banner = document.getElementById('fm-welcome-banner');
+
+      document.getElementById('fm-wb-yes').addEventListener('click', function() {
+        banner.parentElement.remove();
+        // Ouvre directement la toolbar
+        toolbar.classList.add('visible');
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        toggleBtn.classList.remove('compact');
+        toggleBtn.classList.add('expanded');
+      });
+
+      document.getElementById('fm-wb-no').addEventListener('click', function() {
+        banner.parentElement.remove();
+        // Le petit A reste là, le bandeau reviendra à la prochaine visite
+      });
+
+      document.getElementById('fm-wb-never').addEventListener('click', function() {
+        banner.parentElement.remove();
+        localStorage.setItem('fm-banner-dismissed', 'true');
+        // Le petit A reste là, le bandeau ne reviendra jamais
+      });
+    }
     
+    // =============================================
+    // DRAG & DROP BOUTON
+    // =============================================
     let isDragging = false;
     let dragOffset = { x: 0, y: 0 };
     let dragStartTime = 0;
@@ -405,10 +583,13 @@
       toggleBtn.classList.add('compact');
     });
     
+    // =============================================
+    // CONTROLES
+    // =============================================
     document.getElementById('fm-reset').addEventListener('click', function() {
-      if(confirm('Voulez-vous vraiment réinitialiser tous les paramètres ?')) {
+      if(confirm('Voulez-vous vraiment reinitialiser tous les parametres ?')) {
         fm.reset();
-        alert('Tous les paramètres ont été réinitialisés !');
+        alert('Tous les parametres ont ete reinitialises !');
       }
     });
     
@@ -508,7 +689,7 @@
       if(selection) {
         fm.speak(selection);
       } else {
-        alert("Sélectionnez un texte à lire.");
+        alert("Selectionnez un texte a lire.");
       }
     });
     
@@ -530,7 +711,7 @@
       toggleBtn.style.top = '12px';
       toggleBtn.style.left = '12px';
       fm.save();
-      alert("Position réinitialisée en haut à gauche");
+      alert("Position reinitialisee en haut a gauche");
     });
     
     fm.apply();
