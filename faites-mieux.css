@@ -1,6 +1,6 @@
 /* Faites Mieux - Toolbar d'accessibilité universelle
    Par Ti Racoon
-   Version 3.2 - Fix header + Bandeau d'accueil
+   Version 3.3
 */
 
 /* POLICES ACCESSIBLES */
@@ -309,6 +309,16 @@
   margin-bottom: 0;
 }
 
+/* Ligne avec case à cocher (ex: Tout en majuscules) */
+.fm-row-checkbox {
+  justify-content: space-between;
+}
+
+.fm-row-checkbox label {
+  min-width: auto;
+  flex: 1;
+}
+
 .fm-control { 
   width: 100%;
   padding: 8px 10px;
@@ -359,6 +369,21 @@ input[type="range"]::-moz-range-thumb {
 input[type="range"]:focus { 
   outline: 3px solid var(--fm-focus); 
   outline-offset: 2px; 
+}
+
+/* Case à cocher (ex: Tout en majuscules) */
+#fm-toolbar input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  cursor: pointer;
+  accent-color: var(--fm-accent);
+  flex-shrink: 0;
+}
+
+#fm-toolbar input[type="checkbox"]:focus {
+  outline: 3px solid var(--fm-focus);
+  outline-offset: 2px;
 }
 
 .fm-btn { 
@@ -515,6 +540,11 @@ body.fm-falc-3 *:not(#fm-toolbar):not(#fm-toolbar *):not(#fm-toggle-btn) {
   line-height: 2.2 !important;
   letter-spacing: 0.1em !important;
   word-spacing: 0.2em !important;
+}
+
+/* TOUT EN MAJUSCULES - n'affecte jamais la toolbar, le bouton ni le bandeau */
+body.fm-uppercase *:not(#fm-toolbar):not(#fm-toolbar *):not(#fm-toggle-btn):not(#fm-toggle-btn *):not(#fm-welcome-banner):not(#fm-welcome-banner *) {
+  text-transform: uppercase !important;
 }
 
 /* =============================================
