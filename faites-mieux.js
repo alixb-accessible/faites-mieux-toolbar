@@ -1,6 +1,6 @@
 /* Faites Mieux - Toolbar d'accessibilité universelle
    Par Ti Racoon
-   Version 3.2 - Fix header + Bandeau d'accueil
+   Version 3.3
 */
 
 (function() {
@@ -16,6 +16,7 @@
       letterSpacing: 0,
       wordSpacing: 0,
       falc: 0,
+      uppercase: false,
       voiceIndex: 0,
       speechRate: 1,
       buttonPosition: { top: 12, left: 12 }
@@ -51,6 +52,7 @@
         letterSpacing: 0,
         wordSpacing: 0,
         falc: 0,
+        uppercase: false,
         voiceIndex: 0,
         speechRate: 1,
         buttonPosition: { top: 12, left: 12 }
@@ -98,6 +100,11 @@
       
       document.getElementById('fm-falc').value = this.settings.falc;
       
+      const uppercaseCheckbox = document.getElementById('fm-uppercase');
+      if(uppercaseCheckbox) {
+        uppercaseCheckbox.checked = !!this.settings.uppercase;
+      }
+      
       const voiceSelect = document.getElementById('fm-voice');
       if(voiceSelect && this.settings.voiceIndex !== undefined) {
         voiceSelect.value = this.settings.voiceIndex;
@@ -115,8 +122,13 @@
       
       body.classList.remove('fm-falc-1', 'fm-falc-2', 'fm-falc-3');
       body.classList.remove('fm-theme-light', 'fm-theme-dark', 'fm-theme-sepia', 'fm-theme-red', 'fm-theme-blue', 'fm-theme-high-contrast');
+      body.classList.remove('fm-uppercase');
       
       body.classList.add('fm-theme-' + this.settings.theme);
+      
+      if(this.settings.uppercase) {
+        body.classList.add('fm-uppercase');
+      }
       
       if(this.settings.falc > 0) {
         body.classList.add('fm-falc-' + this.settings.falc);
@@ -241,7 +253,7 @@
           this.apply();
           this.save();
           this.updateControls();
-          alert("Preferences importées !");
+          alert("Préférences importées !");
         } catch(err) {
           alert("Erreur import JSON: " + err);
         }
@@ -254,33 +266,33 @@
   // HTML TOOLBAR
   // =============================================
   const toolbarHTML = `
-    <button id="fm-toggle-btn" class="compact" aria-label="Ouvrir les parametres d'accessibilite" aria-expanded="false">
+    <button id="fm-toggle-btn" class="compact" aria-label="Ouvrir les paramètres d'accessibilité" aria-expanded="false">
       <span class="btn-text-compact">A</span>
-      <span class="btn-text-full">Accessibilite / Parametres</span>
+      <span class="btn-text-full">Accessibilité / Paramètres</span>
     </button>
 
-    <div id="fm-toolbar" role="dialog" aria-label="Barre d'outils d'accessibilite">
+    <div id="fm-toolbar" role="dialog" aria-label="Barre d'outils d'accessibilité">
       <header>
         <h2>Fermer le panneau</h2>
         <button class="fm-close" aria-label="Fermer le panneau">&#x00D7;</button>
       </header>
 
       <div class="fm-section">
-        <label for="fm-theme">Theme</label>
+        <label for="fm-theme">Thème</label>
         <select id="fm-theme" class="fm-control">
           <option value="light">Clair</option>
           <option value="dark">Sombre</option>
-          <option value="sepia">Sepia</option>
+          <option value="sepia">Sépia</option>
           <option value="red">Rouge</option>
           <option value="blue">Bleu</option>
-          <option value="high-contrast">Contraste eleve</option>
+          <option value="high-contrast">Contraste élevé</option>
         </select>
       </div>
 
       <div class="fm-section">
         <label for="fm-font">Police</label>
         <select id="fm-font" class="fm-control">
-          <option value="default">Defaut (police du site)</option>
+          <option value="default">Défaut (police du site)</option>
           <option value="Lexend">Lexend</option>
           <option value="Atkinson Hyperlegible">Atkinson Hyperlegible</option>
           <option value="OpenDyslexic">OpenDyslexic</option>
@@ -295,7 +307,7 @@
       </div>
 
       <div class="fm-section fm-row">
-        <label for="fm-brightness">Luminosite</label>
+        <label for="fm-brightness">Luminosité</label>
         <input type="range" min="0.5" max="1.5" step="0.05" value="1" id="fm-brightness">
         <span class="fm-value" id="fm-brightness-val">100%</span>
       </div>
@@ -321,11 +333,16 @@
       <div class="fm-section">
         <label for="fm-falc">Mode FALC</label>
         <select id="fm-falc" class="fm-control">
-          <option value="0">Desactive</option>
+          <option value="0">Désactivé</option>
           <option value="1">Niveau 1</option>
           <option value="2">Niveau 2</option>
           <option value="3">Niveau 3</option>
         </select>
+      </div>
+
+      <div class="fm-section fm-row fm-row-checkbox">
+        <label for="fm-uppercase" style="margin-bottom:0;">Tout en majuscules</label>
+        <input type="checkbox" id="fm-uppercase">
       </div>
 
       <div class="fm-section">
@@ -333,7 +350,7 @@
         <select id="fm-voice" class="fm-control">
           <option value="0">Chargement des voix...</option>
         </select>
-        <p class="fm-voice-info">Selectionnez la voix pour la lecture a l'ecran</p>
+        <p class="fm-voice-info">Sélectionnez la voix pour la lecture à l'écran</p>
       </div>
 
       <div class="fm-section fm-row">
@@ -347,8 +364,8 @@
       </div>
 
       <div class="fm-section">
-        <button class="fm-btn fm-btn-nvda" id="fm-nvda">Telecharger NVDA</button>
-        <p class="fm-voice-info">NVDA est un lecteur d'ecran gratuit et open source</p>
+        <button class="fm-btn fm-btn-nvda" id="fm-nvda">Télécharger NVDA</button>
+        <p class="fm-voice-info">NVDA est un lecteur d'écran gratuit et open source</p>
       </div>
 
       <div class="fm-section fm-row">
@@ -359,12 +376,12 @@
       </div>
 
       <div class="fm-section">
-        <button class="fm-btn fm-btn-secondary" id="fm-reset-position">Reinitialiser position du bouton</button>
-        <p class="fm-voice-info">Replace le bouton en haut a gauche</p>
+        <button class="fm-btn fm-btn-secondary" id="fm-reset-position">Réinitialiser position du bouton</button>
+        <p class="fm-voice-info">Replace le bouton en haut à gauche</p>
       </div>
 
       <div class="fm-section">
-        <button class="fm-btn fm-reset-btn" id="fm-reset" style="width:100%;">Reinitialiser tout</button>
+        <button class="fm-btn fm-reset-btn" id="fm-reset" style="width:100%;">Réinitialiser tout</button>
       </div>
 
       <p id="fm-signature">Faites Mieux &mdash; par Ti Racoon</p>
@@ -375,7 +392,7 @@
   // HTML BANDEAU D'ACCUEIL
   // =============================================
   const bannerHTML = `
-    <div id="fm-welcome-banner" role="complementary" aria-label="Proposition d'aide a l'accessibilite">
+    <div id="fm-welcome-banner" role="complementary" aria-label="Proposition d'aide à l'accessibilité">
       <p class="fm-wb-text">Besoin d'aide pour lire ou naviguer sur ce site ?</p>
       <div class="fm-wb-actions">
         <button id="fm-wb-yes">Oui, voir les options</button>
@@ -587,9 +604,9 @@
     // CONTROLES
     // =============================================
     document.getElementById('fm-reset').addEventListener('click', function() {
-      if(confirm('Voulez-vous vraiment reinitialiser tous les parametres ?')) {
+      if(confirm('Voulez-vous vraiment réinitialiser tous les paramètres ?')) {
         fm.reset();
-        alert('Tous les parametres ont ete reinitialises !');
+        alert('Tous les paramètres ont été réinitialisés !');
       }
     });
     
@@ -669,6 +686,14 @@
       fm.save();
     });
     
+    const uppercaseCheckbox = document.getElementById('fm-uppercase');
+    uppercaseCheckbox.checked = !!fm.settings.uppercase;
+    uppercaseCheckbox.addEventListener('change', function(e) {
+      fm.settings.uppercase = e.target.checked;
+      fm.apply();
+      fm.save();
+    });
+    
     document.getElementById('fm-voice').addEventListener('change', function(e) {
       fm.settings.voiceIndex = parseInt(e.target.value);
       fm.save();
@@ -689,7 +714,7 @@
       if(selection) {
         fm.speak(selection);
       } else {
-        alert("Selectionnez un texte a lire.");
+        alert("Sélectionnez un texte à lire.");
       }
     });
     
@@ -711,7 +736,7 @@
       toggleBtn.style.top = '12px';
       toggleBtn.style.left = '12px';
       fm.save();
-      alert("Position reinitialisee en haut a gauche");
+      alert("Position réinitialisée en haut à gauche");
     });
     
     fm.apply();
