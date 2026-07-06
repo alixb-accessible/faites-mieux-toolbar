@@ -1,7 +1,7 @@
 # faites-mieux-toolbar
 Barre d'accessibilité
 
-# Faites Mieux v3.1 - Guide d'intégration
+# Faites Mieux v3.3 - Guide d'intégration
 
 ## La phrase magique à copier-coller
 
